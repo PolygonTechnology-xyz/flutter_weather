@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather/data/repositories/weather_repository_impl.dart';
 import 'package:flutter_weather/search/search.dart';
+import 'package:flutter_weather/weather/widgets/weather_empty.dart';
+import 'package:flutter_weather/weather/widgets/weather_error.dart';
+import 'package:flutter_weather/weather/widgets/weather_loading.dart';
 import 'package:flutter_weather/weather/widgets/weather_populated.dart';
 
 import '../bloc/weather_bloc.dart';
@@ -13,7 +16,7 @@ class WeatherScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => WeatherBloc(context.read<WeatherRepositoryImpl>()),
-      child: WeatherView(),
+      child: const WeatherView(),
     );
   }
 }
@@ -40,7 +43,7 @@ class _WeatherViewState extends State<WeatherView> {
               var result = await Navigator.of(context).push(
                 SearchScreen.route(),
               );
-              if (result != null) {
+              if (result != null && mounted) {
                 context.read<WeatherBloc>().add(GetWeather(city: result));
               }
             },
@@ -52,23 +55,22 @@ class _WeatherViewState extends State<WeatherView> {
           child: BlocConsumer<WeatherBloc, WeatherState>(
             listener: (context, state) {},
             builder: (context, state) {
-              switch (state.status){
+              switch (state.status) {
                 case Status.initial:
-                  return Container();
+                  return const WeatherEmpty();
                 case Status.failed:
-                  return Container();
+                  return const WeatherError();
                 case Status.loading:
-                  return Container(child: Center(child: CircularProgressIndicator()),);
+                  return const WeatherLoading();
                 case Status.success:
                   return WeatherPopulated(
-                      weather: state.weather!,
-                      units: state.temperatureUnits,
-                      onRefresh: () {
-                        return getRefresh();
-                      });
-
+                    weather: state.weather!,
+                    units: state.temperatureUnits,
+                    onRefresh: () {
+                      return getRefresh();
+                    },
+                  );
               }
-
             },
           ),
         ),

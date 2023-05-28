@@ -1,4 +1,3 @@
-
 class CurrentWeather {
   double? temperature;
   double? windSpeed;
@@ -13,5 +12,4 @@ class CurrentWeather {
     time = json['time'];
     weatherCode = json['weathercode'];
   }
-
 }

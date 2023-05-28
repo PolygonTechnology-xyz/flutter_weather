@@ -11,8 +11,6 @@ class Location {
       });
     }
   }
-
-
 }
 
 class LocationData {
